@@ -1,0 +1,71 @@
+<!--
+  Example ros2_control block to include in your robot's URDF / xacro.
+  Replace joint names to match your actual URDF joints.
+  Place this block inside the <robot> root element.
+-->
+
+<ros2_control name="robot_6dof_hw" type="system">
+
+  <hardware>
+    <plugin>robot_hardware_interface/RobotHardwareInterface</plugin>
+    <!-- Serial port connected to the Arduino -->
+    <param name="serial_port">/dev/ttyUSB0</param>
+    <!-- Baud rate must match the Arduino sketch -->
+    <param name="baud_rate">115200</param>
+  </hardware>
+
+  <!-- Joint 1 -->
+  <joint name="joint_1">
+    <command_interface name="position">
+      <param name="min">-3.14159</param>
+      <param name="max"> 3.14159</param>
+    </command_interface>
+    <state_interface name="position"/>
+  </joint>
+
+  <!-- Joint 2 -->
+  <joint name="joint_2">
+    <command_interface name="position">
+      <param name="min">-1.5708</param>
+      <param name="max"> 1.5708</param>
+    </command_interface>
+    <state_interface name="position"/>
+  </joint>
+
+  <!-- Joint 3 -->
+  <joint name="joint_3">
+    <command_interface name="position">
+      <param name="min">-1.5708</param>
+      <param name="max"> 1.5708</param>
+    </command_interface>
+    <state_interface name="position"/>
+  </joint>
+
+  <!-- Joint 4 -->
+  <joint name="joint_4">
+    <command_interface name="position">
+      <param name="min">-3.14159</param>
+      <param name="max"> 3.14159</param>
+    </command_interface>
+    <state_interface name="position"/>
+  </joint>
+
+  <!-- Joint 5 -->
+  <joint name="joint_5">
+    <command_interface name="position">
+      <param name="min">-1.5708</param>
+      <param name="max"> 1.5708</param>
+    </command_interface>
+    <state_interface name="position"/>
+  </joint>
+
+  <!-- Joint 6 -->
+  <joint name="joint_6">
+    <command_interface name="position">
+      <param name="min">-3.14159</param>
+      <param name="max"> 3.14159</param>
+    </command_interface>
+    <state_interface name="position"/>
+  </joint>
+
+</ros2_control>

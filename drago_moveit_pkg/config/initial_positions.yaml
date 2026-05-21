@@ -1,0 +1,9 @@
+# Default initial positions for Drago's ros2_control fake system
+
+initial_positions:
+  Effector_joint: 0
+  Elbow_joint: 0
+  Shoulder_joint: 0
+  Waist_joint: 0
+  Wrist_1_joint: 0
+  Wrist_2_joint: 0

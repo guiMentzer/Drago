@@ -1,0 +1,19 @@
+# MoveIt uses this configuration for controller management
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - Drago_controller
+
+  Drago_controller:
+    type: FollowJointTrajectory
+    joints:
+      - Waist_joint
+      - Shoulder_joint
+      - Elbow_joint
+      - Wrist_1_joint
+      - Wrist_2_joint
+      - Effector_joint
+    action_ns: follow_joint_trajectory
+    default: true

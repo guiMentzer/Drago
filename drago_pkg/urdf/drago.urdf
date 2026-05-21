@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot
+  name="Drago">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-3.17939775335685E-08 -0.00264994119849839 0.024520116544489"
+        rpy="0 0 0" />
+      <mass
+        value="0.150185390114133" />
+      <inertia
+        ixx="0.000168237215192189"
+        ixy="-4.1193940307426E-11"
+        ixz="4.55755042083359E-11"
+        iyy="0.000154817201119742"
+        iyz="3.91097259857606E-06"
+        izz="0.000251145547154156" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.909803921568627 0.447058823529412 0.0431372549019608 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Waist_link">
+    <inertial>
+      <origin
+        xyz="-0.000676323173403932 0.0126083773212082 0.0204053116340272"
+        rpy="0 0 0" />
+      <mass
+        value="0.114312274057208" />
+      <inertia
+        ixx="5.85730201621192E-05"
+        ixy="-2.01852917189799E-06"
+        ixz="7.34554378804278E-06"
+        iyy="7.4949840825555E-05"
+        iyz="-3.56787891760963E-06"
+        izz="7.44043801409344E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Waist_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.909803921568627 0.443137254901961 0.0313725490196078 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Waist_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Waist_joint"
+    type="revolute">
+    <origin
+      xyz="0 0 0.06165"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="Waist_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="3" />
+    <dynamics
+      damping="1"
+      friction="1" />
+  </joint>
+  <link
+    name="Shoulder_link">
+    <inertial>
+      <origin
+        xyz="-2.52041920136073E-05 0.0600135143636057 0.019804576428293"
+        rpy="0 0 0" />
+      <mass
+        value="0.0683062909364027" />
+      <inertia
+        ixx="0.0001113354847057"
+        ixy="2.14175645290312E-10"
+        ixz="-6.57129254857723E-09"
+        iyy="9.89041105147483E-06"
+        iyz="-1.38107151450493E-08"
+        izz="0.000116571288618766" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Shoulder_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.909803921568627 0.447058823529412 0.0431372549019608 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Shoulder_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Shoulder_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0138993282947757 0.0103143963931036 0.04028"
+      rpy="1.56990264699179 -0.614305609815112 0.000515109286944776" />
+    <parent
+      link="Waist_link" />
+    <child
+      link="Shoulder_link" />
+    <axis
+      xyz="0.0012670059545015 0 -0.999999197347633" />
+    <limit
+      lower="-1.31"
+      upper="2.5"
+      effort="1"
+      velocity="3" />
+  </joint>
+  <link
+    name="Elbow_link">
+    <inertial>
+      <origin
+        xyz="0.0355691423861956 -0.000417820683792508 -0.00500607323785878"
+        rpy="0 0 0" />
+      <mass
+        value="0.104178577887407" />
+      <inertia
+        ixx="1.93592335339553E-05"
+        ixy="2.54946103415903E-07"
+        ixz="3.93913710148055E-07"
+        iyy="7.13397768744526E-05"
+        iyz="-1.31077728319941E-08"
+        izz="7.20804633552649E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Elbow_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.909803921568627 0.443137254901961 0.0313725490196078 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Elbow_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Elbow_joint"
+    type="revolute">
+    <origin
+      xyz="0 0.12 0"
+      rpy="0.000730291763721768 0 -0.614305797905159" />
+    <parent
+      link="Shoulder_link" />
+    <child
+      link="Elbow_link" />
+    <axis
+      xyz="0.00103536403989601 0 -0.999999464010509" />
+    <limit
+      lower="-4"
+      upper="0.12"
+      effort="1"
+      velocity="3" />
+  </joint>
+  <link
+    name="Wrist_1_link">
+    <inertial>
+      <origin
+        xyz="0.00607897954377361 0.00364397902802904 0.0234182353222563"
+        rpy="0 0 0" />
+      <mass
+        value="0.0380971171326554" />
+      <inertia
+        ixx="1.1860347124032E-05"
+        ixy="-2.75536216962121E-08"
+        ixz="-4.05594221123261E-07"
+        iyy="1.36525245956248E-05"
+        iyz="4.79313308370815E-07"
+        izz="7.54220734333144E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Wrist_1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.909803921568627 0.443137254901961 0.0313725490196078 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Wrist_1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Wrist_1_joint"
+    type="revolute">
+    <origin
+      xyz="0.0943999494025927 -0.005 9.77383653464683E-05"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="Elbow_link" />
+    <child
+      link="Wrist_1_link" />
+    <axis
+      xyz="0.001035364039901 0 -0.999999464010509" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="3" />
+  </joint>
+  <link
+    name="Wrist_2_link">
+    <inertial>
+      <origin
+        xyz="0.0166070440758065 0.000139180486092322 -0.00152313864772932"
+        rpy="0 0 0" />
+      <mass
+        value="0.0143322219516906" />
+      <inertia
+        ixx="1.20971579960555E-06"
+        ixy="-1.20417958057003E-08"
+        ixz="-5.41745725198343E-08"
+        iyy="1.15223913686393E-06"
+        iyz="1.04848328536845E-08"
+        izz="1.96703829342423E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Wrist_2_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.909803921568627 0.443137254901961 0.0313725490196078 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Wrist_2_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Wrist_2_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0013012254232319 0.0034038765092409 0.0208385964872179"
+      rpy="-3.14159265358979 -1.56976096256998 3.14159265358979" />
+    <parent
+      link="Wrist_1_link" />
+    <child
+      link="Wrist_2_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.57"
+      upper="1.396"
+      effort="1"
+      velocity="3" />
+  </joint>
+  <link
+    name="Effector_link">
+    <inertial>
+      <origin
+        xyz="0.00778015430289843 0.00364256165738719 -0.00361079517313335"
+        rpy="0 0 0" />
+      <mass
+        value="0.00118783436629656" />
+      <inertia
+        ixx="1.21592416437205E-07"
+        ixy="2.05279534283296E-08"
+        ixz="-2.0386676237453E-08"
+        iyy="1.21305131169617E-07"
+        iyz="-2.04470678584157E-08"
+        izz="1.21633378578844E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Effector_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.0274509803921569 0.0274509803921569 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drago_pkg/meshes/Effector_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Effector_joint"
+    type="revolute">
+    <origin
+      xyz="0.040844 -0.0051105 -0.0013078"
+      rpy="0 0.0010354 0" />
+    <parent
+      link="Wrist_2_link" />
+    <child
+      link="Effector_link" />
+    <axis
+      xyz="1 0 0.0010354" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="1"
+      velocity="3" />
+  </joint>
+</robot>

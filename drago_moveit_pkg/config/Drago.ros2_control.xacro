@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="Drago_ros2_control" params="name initial_positions_file">
+        <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"/>
+
+        <ros2_control name="DragoSystem" type="system">
+            <hardware>
+                <!-- By default, set up controllers for simulation. This won't work on real hardware -->
+                <!--<plugin>mock_components/GenericSystem</plugin>-->
+                <plugin>robot_hardware_interface/RobotHardwareInterface</plugin>
+                <param name="serial_port">/dev/ttyACM0</param>
+                <param name="baud_rate">115200</param>
+            </hardware>
+            <joint name="Waist_joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Waist_joint']}</param>
+                </state_interface>
+            </joint>
+            <joint name="Shoulder_joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Shoulder_joint']}</param>
+                </state_interface>
+            </joint>
+            <joint name="Elbow_joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Elbow_joint']}</param>
+                </state_interface>
+            </joint>
+            <joint name="Wrist_1_joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Wrist_1_joint']}</param>
+                </state_interface>
+            </joint>
+            <joint name="Wrist_2_joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Wrist_2_joint']}</param>
+                </state_interface>
+            </joint>
+            <joint name="Effector_joint">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['Effector_joint']}</param>
+                </state_interface>
+            </joint>
+
+        </ros2_control>
+    </xacro:macro>
+</robot>

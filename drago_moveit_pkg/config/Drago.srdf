@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="Drago">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="Drago">
+        <joint name="Waist_joint"/>
+        <joint name="Shoulder_joint"/>
+        <joint name="Elbow_joint"/>
+        <joint name="Wrist_1_joint"/>
+        <joint name="Wrist_2_joint"/>
+        <joint name="Effector_joint"/>
+    </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="Home position " group="Drago">
+        <joint name="Effector_joint" value="0"/>
+        <joint name="Elbow_joint" value="0"/>
+        <joint name="Shoulder_joint" value="0"/>
+        <joint name="Waist_joint" value="0"/>
+        <joint name="Wrist_1_joint" value="0"/>
+        <joint name="Wrist_2_joint" value="0"/>
+    </group_state>
+    <group_state name="Pick position" group="Drago">
+        <joint name="Effector_joint" value="0"/>
+        <joint name="Elbow_joint" value="-0.4035"/>
+        <joint name="Shoulder_joint" value="1.5107"/>
+        <joint name="Waist_joint" value="0"/>
+        <joint name="Wrist_1_joint" value="0"/>
+        <joint name="Wrist_2_joint" value="-1.119"/>
+    </group_state>
+    <group_state name="Place position " group="Drago">
+        <joint name="Effector_joint" value="1.57"/>
+        <joint name="Elbow_joint" value="-0.8133"/>
+        <joint name="Shoulder_joint" value="1.8686"/>
+        <joint name="Waist_joint" value="-1.57"/>
+        <joint name="Wrist_1_joint" value="0"/>
+        <joint name="Wrist_2_joint" value="-1.0459"/>
+    </group_state>
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="Effector_link" link2="Elbow_link" reason="Never"/>
+    <disable_collisions link1="Effector_link" link2="Shoulder_link" reason="Never"/>
+    <disable_collisions link1="Effector_link" link2="Wrist_1_link" reason="Never"/>
+    <disable_collisions link1="Effector_link" link2="Wrist_2_link" reason="Adjacent"/>
+    <disable_collisions link1="Elbow_link" link2="Shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="Elbow_link" link2="Wrist_1_link" reason="Adjacent"/>
+    <disable_collisions link1="Elbow_link" link2="Wrist_2_link" reason="Never"/>
+    <disable_collisions link1="Shoulder_link" link2="Waist_link" reason="Adjacent"/>
+    <disable_collisions link1="Shoulder_link" link2="Wrist_1_link" reason="Never"/>
+    <disable_collisions link1="Shoulder_link" link2="Wrist_2_link" reason="Never"/>
+    <disable_collisions link1="Shoulder_link" link2="base_link" reason="Never"/>
+    <disable_collisions link1="Waist_link" link2="base_link" reason="Adjacent"/>
+    <disable_collisions link1="Wrist_1_link" link2="Wrist_2_link" reason="Adjacent"/>
+</robot>

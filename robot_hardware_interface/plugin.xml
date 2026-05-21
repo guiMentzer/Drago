@@ -1,0 +1,12 @@
+<library path="robot_hardware_interface">
+  <class
+    name="robot_hardware_interface/RobotHardwareInterface"
+    type="robot_hardware_interface::RobotHardwareInterface"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware Interface for a 6-DOF robot arm with serial communication to Arduino.
+      Exports position command interfaces for all 6 joints.
+      State interfaces mirror commands (no encoders).
+    </description>
+  </class>
+</library>

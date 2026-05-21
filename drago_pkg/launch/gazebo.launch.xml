@@ -1,0 +1,46 @@
+<launch> 
+  <let name="urdf_file" 
+	     value="$(command 'cat $(find-pkg-share drago_pkg)/urdf/drago.urdf')"/>
+  <let name="world_file"
+       value="$(find-pkg-share drago_pkg)/worlds/empty.sdf"/>
+
+  <executable cmd="bash -c 'echo GZ_SIM_RESOURCE_PATH already set'"
+            output="screen"/>
+  <set_env name="GZ_SIM_RESOURCE_PATH"
+         value="$(find-pkg-share drago_pkg)/.."/>
+
+  <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+    <arg name="gz_args"
+         value="empty.sdf"/>
+  </include>
+
+  <node pkg="robot_state_publisher"
+		    exec="robot_state_publisher"
+		    output="screen">
+    <param name="robot_description"
+		       value="$(var urdf_file)"/>
+  </node> 
+
+  <node pkg="joint_state_publisher_gui"
+        exec="joint_state_publisher_gui"
+        output="screen">
+  </node>
+
+  <node pkg="rviz2"
+  			exec="rviz2"
+  			output="screen"
+  			args="-d $(find-pkg-share drago_pkg)/config/config_rviz.rviz">
+  </node>
+
+  <node pkg="ros_gz_sim" 
+        exec="create"
+        name="spawn_robot" 
+        output="screen">
+    <param name="name"   value="Drago"/>
+    <param name="string" value="$(var urdf_file)"/>
+    <param name="x"      value="0.0"/>
+    <param name="y"      value="0.0"/>
+    <param name="z"      value="0.0"/>
+    <param name="Y"      value="0.0"/>
+  </node>
+</launch>

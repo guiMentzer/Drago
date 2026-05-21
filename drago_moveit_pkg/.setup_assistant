@@ -1,0 +1,23 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: drago_pkg
+    relative_path: urdf/drago.urdf
+  srdf:
+    relative_path: config/Drago.srdf
+  package_settings:
+    author_name: Guy
+    author_email: guilhermepaivacrispim@gmail.com
+    generated_timestamp: 1777336285
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
