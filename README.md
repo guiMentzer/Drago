@@ -2,6 +2,24 @@
 
 https://github.com/user-attachments/assets/34009592-8adb-4513-a7bd-33d4de80e65d
 
+# Montagem e design 
+
+## Versão atual  
+
+<img width="596" height="577" alt="Captura de tela 2026-05-27 110014" src="https://github.com/user-attachments/assets/0215915b-2b29-4689-b322-f10d66b289b5" />
+
+## Versão futura 
+
+No futuro, pretendo cobrir os componentes eletrônicos, juntamente com a implementação de uma tela Oled para visualição do estado das juntas 
+
+<img width="545" height="590" alt="Captura de tela 2026-05-28 140028" src="https://github.com/user-attachments/assets/c52ee738-e658-4472-b467-857b11f53169" />
+
+A interface visual já foi testada no site [Wokwi](https://wokwi.com/)
+
+<img width="423" height="471" alt="Captura de tela 2026-05-25 174843" src="https://github.com/user-attachments/assets/c3e07e82-85e9-4eec-9d79-2853cc5530a4" />
+
+Encontre o projeto em [Meu projeto no Wokwi](https://wokwi.com/projects/464991738746474497)
+
 # Pacotes ROS2
 
 ## 'drago_pkg' 
