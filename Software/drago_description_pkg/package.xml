@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>drago_pkg</name>
+  <name>drago_description_pkg</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="guilherme@todo.todo">guilherme</maintainer>
+  <description>
+    Description of the Drago robot arm. Contains URDF, meshes and some visualizations. Offered by just a Guy
+  </description>
+  <maintainer email="guilhermepaivacrispim@gmail.com">Guy</maintainer>
   <license>TODO: License declaration</license>
+
+  <author email="guilhermepaivacrispim@gmail.com">Guy</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>drago_task_pkg</name>
+  <version>0.0.1</version>
+  <description>
+    The MTC (MoveIt Task Constructor) aplication for the Drago robot arm. Contains the task tamplate code. Offered by just a Guy
+  </description>
+
+  <maintainer email="guilhermepaivacrispim@gmail.com">Guy</maintainer>
+  <license>TODO</license>
+ 
+   <author email="guilhermepaivacrispim@gmail.com">Guy</author>
+ 
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- MoveIt Task Constructor core -->
+  <depend>moveit_task_constructor_core</depend>
+  <depend>moveit_task_constructor_visualization</depend>
+
+  <!-- MoveIt 2 -->
+  <depend>moveit_ros_planning_interface</depend>
+  <depend>moveit_core</depend>
+
+  <!-- ROS 2 base -->
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>moveit_msgs</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

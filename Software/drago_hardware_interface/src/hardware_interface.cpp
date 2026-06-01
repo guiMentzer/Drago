@@ -1,4 +1,4 @@
-#include "robot_hardware_interface/hardware_interface.hpp"
+#include "drago_hardware_interface/hardware_interface.hpp"
 
 #include <cstring>
 #include <sstream>

@@ -15,6 +15,9 @@ def generate_launch_description():
         .to_moveit_configs()
     )
 
+    # Load ExecuteTaskSolutionCapability so we can execute found solutions in simulation
+    move_group_capabilities = {"capabilities": "move_group/ExecuteTaskSolutionCapability"}
+
     # Start the actual move_group node/action server
     run_move_group_node = Node(
         package="moveit_ros_move_group",
@@ -22,6 +25,7 @@ def generate_launch_description():
         output="screen",
         parameters=[
             moveit_config.to_dict(),
+            move_group_capabilities,
         ],
     )
 
@@ -87,6 +91,18 @@ def generate_launch_description():
             )
         ]
 
+    task_constructor_node = Node(
+        package="task_pkg",
+        executable="task_example",
+        output="screen",
+        parameters=[
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            moveit_config.joint_limits,
+        ],
+    )
+
     return LaunchDescription(
         [
             rviz_node,
@@ -94,6 +110,7 @@ def generate_launch_description():
             robot_state_publisher,
             run_move_group_node,
             ros2_control_node,
+            task_constructor_node,
         ]
         + load_controllers
     )

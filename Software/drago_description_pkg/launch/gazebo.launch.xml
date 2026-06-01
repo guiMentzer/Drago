@@ -1,13 +1,13 @@
 <launch> 
   <let name="urdf_file" 
-	     value="$(command 'cat $(find-pkg-share drago_pkg)/urdf/drago.urdf')"/>
+	     value="$(command 'cat $(find-pkg-share drago_description_pkg)/urdf/drago.urdf')"/>
   <let name="world_file"
-       value="$(find-pkg-share drago_pkg)/worlds/empty.sdf"/>
+       value="$(find-pkg-share drago_description_pkg)/worlds/empty.sdf"/>
 
   <executable cmd="bash -c 'echo GZ_SIM_RESOURCE_PATH already set'"
             output="screen"/>
   <set_env name="GZ_SIM_RESOURCE_PATH"
-         value="$(find-pkg-share drago_pkg)/.."/>
+         value="$(find-pkg-share drago_description_pkg)/.."/>
 
   <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
     <arg name="gz_args"
@@ -29,7 +29,7 @@
   <node pkg="rviz2"
   			exec="rviz2"
   			output="screen"
-  			args="-d $(find-pkg-share drago_pkg)/config/config_rviz.rviz">
+  			args="-d $(find-pkg-share drago_description_pkg)/config/config_rviz.rviz">
   </node>
 
   <node pkg="ros_gz_sim" 

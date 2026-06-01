@@ -1,6 +1,6 @@
-<library path="robot_hardware_interface">
+<library path="drago_hardware_interface">
   <class
-    name="robot_hardware_interface/RobotHardwareInterface"
+    name="drago_hardware_interface/RobotHardwareInterface"
     type="robot_hardware_interface::RobotHardwareInterface"
     base_class_type="hardware_interface::SystemInterface">
     <description>

@@ -1,4 +1,4 @@
-# robot_hardware_interface
+# drago_hardware_interface
 
 ROS 2 Hardware Interface (HI) for a **6-DOF robot arm** with serial communication to an Arduino.
 
@@ -122,10 +122,4 @@ joint_trajectory_controller:
       - position
     open_loop_control: true   # recommended when there are no encoders
     allow_partial_joints_goal: false
-```
-
-Launch with:
-
-```bash
-ros2 launch robot_bringup robot.launch.py
 ```
