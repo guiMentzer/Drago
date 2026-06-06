@@ -7,6 +7,8 @@ Este repositório contém o firmware para o Arduino responsável pelo controle d
 É uma das funções essenciais para o Arduino funcionar. É executada uma única vez no começo do código, por isso é usada para configuração de portas/bilbiotecas
 
 ```cpp
+// [...]
+
 float angles[6];
 
 void setup()
@@ -18,13 +20,17 @@ void setup()
     delay(10);
   }
 
+// [...]
 ```
+
+A linha ```Driver.setPWMFreq(SERVO_FREQ);``` usa a bilbioteca **Adafruit_PWMServoDriver** para controlar os servos. Aqui, seta a frequência de atualização do sinal para  50 Hz, ```#define SERVO_FREQ 50```. 
 
 ## 2. void loop()
 
-É a outra função essencial para o Arduino. Como o nome diz, é executada em loop sem parar e contém toda nossa lógica. 
+É a outra função essencial para o Arduino. Como o nome diz, é executada em loop, sem parar, e contém toda nossa lógica. 
 
 ```cpp
+// [...]
 
 void loop() 
 {
@@ -45,7 +51,16 @@ void loop()
     }
   }
 
+// [...]
+
+}
 ```
+
+A mensagem serial é do tipo ```HOME``` para a posição de descanso e ```J <d1> <d2> <d3> <d4> <d5> <d6>``` para qualquer outra posição. 
+
+```if(input == "HOME")``` verifica se a mensagem é da posição de descanso. 
+
+```Driver.setPWM(j, 0, angleToPulse(angles[j], j));``` usa a bilioteca para mandar um sinal PWM ao servo j (primeiro parâmetro), com sinal ```angleToPulse(angles[j], j)``` (terceiro parâmetro).  
 
 ## 3. Função `angleToPulse`
 Esta função é responsável por mapear os ângulos recebidos para a contagem de pulso PWM específica de cada junta. Ela garante que o servo não tente se mover além dos limites físicos configurados através de verificações condicionais `if`.
