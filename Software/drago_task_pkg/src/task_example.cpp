@@ -168,8 +168,8 @@ int main(int argc, char** argv)
     loop_task.add(makeMoveToJoints("Go to pose 3",  ARM_GROUP, POSE_3));
     loop_task.add(makeMoveRotation("Rotação em Z",  ARM_GROUP, EEF_FRAME,'z', M_PI/4));
     loop_task.add(makeMoveRotation("Rotação em Z",  ARM_GROUP, EEF_FRAME, 'z', -M_PI/4));
-    //loop_task.add(makeMoveToJoints("Go to pose 4",  ARM_GROUP, POSE_4));
-    //loop_task.add(makeMoveToJoints("Go to pose 5",  ARM_GROUP, POSE_5));
+    loop_task.add(makeMoveToJoints("Go to pose 4",  ARM_GROUP, POSE_4));
+    loop_task.add(makeMoveToJoints("Go to pose 5",  ARM_GROUP, POSE_5));
     loop_task.add(makeMoveToJoints("Back to Home", ARM_GROUP, HOME_POSE));
 
     try {

@@ -29,6 +29,8 @@
 #define MIN_6 -1.57*(180/3.1415)
 #define MAX_6 1.57*(180/3.1415)
 
+#define GRIPPER_HOME_ANGLE 30.0
+
 Adafruit_PWMServoDriver Driver = Adafruit_PWMServoDriver();
 
 int angleToPulse(float angle, int joint) 
@@ -64,10 +66,16 @@ int angleToPulse(float angle, int joint)
     if (angle>MAX_6) {return 544;}
     if (angle<MIN_6) {return 120;}
     return map(angle, MIN_6, MAX_6, 120, 544);
+
+    case 6: 
+    if (angle>MAX_6) {return MAX_PWM;}
+    if (angle<MIN_6) {return MIN_PWM;}
+    return map(angle, MIN_6, MAX_6, MIN_PWM, MAX_PWM);
   }
 }
 
-float angles[6];
+// angles[0..5] = juntas do braço | angles[6] = servo da garra
+float angles[7];
 
 void setup()
   {
@@ -89,22 +97,24 @@ void loop()
   if (input == "HOME") 
   {
     //Serial.println("OK HOME");
-    angles[6] = {0.0}; 
     for(byte j=0;j<=5;j++)
     {
+    angles[j] = 0.0;
     Driver.setPWM(j, 0, angleToPulse(angles[j], j));
-    delay(10);
     }
+
+    angles[6] = GRIPPER_HOME_ANGLE;
+    Driver.setPWM(6, 0, angleToPulse(angles[6], 6));
   }
 
 if (input.startsWith("J ")) {
-  String data = input.substring(3);
+  String data = input.substring(2);  // remove "J " (era substring(3), cortava o 1º dígito)
   data.trim();
 
   int parsed = 0;
 
     // Separa por espaços um token de cada vez
-    while (parsed < 6 && data.length() > 0) {
+    while (parsed < 7 && data.length() > 0) {
       int spaceIdx = data.indexOf(' ');
       String token;
 
@@ -124,27 +134,14 @@ if (input.startsWith("J ")) {
       }
     }
 
-   if (parsed != 6) {
-      //Serial.print("ERR expected ");
-      //Serial.print("6");
-      //Serial.print(" angles, got ");
-      //Serial.println(parsed);
+   if (parsed != 7) {
       return;
     }
 
-    for(byte j=0;j<=5;j++)
+    for(byte j=0;j<7;j++)
     {
     Driver.setPWM(j, 0, angleToPulse(angles[j], j));
-    delay(10);
-    //Serial.println(angles[j]);
-    //Serial.println(angleToPulse(angles[j]));
     }
-
-    //Serial.println("OK J");
     return;
 }  
-
-//Serial.print("ERR unknown: ");
-  //Serial.println(input);
-
 }

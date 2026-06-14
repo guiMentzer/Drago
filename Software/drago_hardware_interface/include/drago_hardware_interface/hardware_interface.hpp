@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cmath>
+#include <algorithm>
 
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/handle.hpp"
@@ -56,6 +58,11 @@ private:
   void closeSerialPort();
   bool sendCommand(const std::string & cmd);
 
+  // Converts the gripper prismatic joint displacement (meters) into the
+  // physical gripper servo angle (degrees), using the linkage geometry
+  // and the calibration offset for the "closed" position.
+  double gripperDisplacementToServoAngleDeg(double displacement_m) const;
+
   // Serial port file descriptor
   int serial_fd_;
 
@@ -63,8 +70,14 @@ private:
   std::string serial_port_;
   int baud_rate_;
 
-  // Number of joints
-  static constexpr size_t NUM_JOINTS = 6;
+  // Total number of joints exposed via <ros2_control>:
+  //   6 arm joints + 2 gripper claw joints (Right_Claw_joint, Left_Claw_joint)
+  // Note: "Gripper_joint" is a fixed joint and is NOT listed in <ros2_control>.
+  static constexpr size_t NUM_JOINTS = 8;
+
+  // Length of the gripper's servo-arm linkage, in meters (see formula in
+  // gripperDisplacementToServoAngleDeg).
+  static constexpr double GRIPPER_LINK_LENGTH = 0.012;
 
   // Joint names (populated from HardwareInfo)
   std::vector<std::string> joint_names_;
@@ -74,6 +87,17 @@ private:
 
   // State interfaces (position state — will mirror commands since no encoders)
   std::vector<double> hw_states_position_;
+
+  // Indices into joint_names_ / hw_commands_position_ for the gripper claws.
+  // Right_Claw_joint drives the physical servo; Left_Claw_joint is mechanically
+  // mirrored and is not sent to the Arduino.
+  size_t right_claw_index_;
+  size_t left_claw_index_;
+
+  // Calibration constant "x": servo angle (degrees) corresponding to the
+  // gripper fully closed (displacement = 0). Configurable via the URDF
+  // <param name="gripper_closed_servo_angle_deg">...</param>.
+  double gripper_closed_servo_angle_deg_;
 
   // Steady clock reused across cycles (avoids per-cycle allocation)
   rclcpp::Clock::SharedPtr clock_;

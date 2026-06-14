@@ -6,6 +6,7 @@ from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 
+
 def generate_launch_description():
     moveit_config = (
         MoveItConfigsBuilder("Drago", package_name="drago_moveit_pkg")
@@ -15,6 +16,9 @@ def generate_launch_description():
         .to_moveit_configs()
     )
 
+    # Load  ExecuteTaskSolutionCapability so we can execute found solutions in simulation
+    move_group_capabilities = {"capabilities": "move_group/ExecuteTaskSolutionCapability"}
+
     # Start the actual move_group node/action server
     run_move_group_node = Node(
         package="moveit_ros_move_group",
@@ -22,6 +26,7 @@ def generate_launch_description():
         output="screen",
         parameters=[
             moveit_config.to_dict(),
+            move_group_capabilities,
         ],
     )
 
@@ -48,7 +53,7 @@ def generate_launch_description():
         executable="static_transform_publisher",
         name="static_transform_publisher",
         output="log",
-        arguments=["--frame-id", "base_link", "--child-frame-id", "base_link"],
+        arguments=["--frame-id", "base_link", "--child-frame-id", "Waist_joint"],
     )
 
     # Publish TF
@@ -76,7 +81,8 @@ def generate_launch_description():
     # Load controllers
     load_controllers = []
     for controller in [
-        "Drago_controller",
+        "gripper_controller",
+        "arm_controller",
         "joint_state_broadcaster",
     ]:
         load_controllers += [

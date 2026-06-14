@@ -31,7 +31,6 @@
   <!-- <exec_depend>joint_trajectory_controller</exec_depend> -->
   <!-- <exec_depend>gazebo_ros_control</exec_depend> -->
   <exec_depend>controller_manager</exec_depend>
-  <exec_depend>drago_pkg</exec_depend>
   <exec_depend>moveit_configs_utils</exec_depend>
   <exec_depend>moveit_ros_move_group</exec_depend>
   <exec_depend>moveit_ros_visualization</exec_depend>
@@ -45,9 +44,10 @@
   <exec_depend>warehouse_ros_mongo</exec_depend>
 
   <!-- Inclui a dependência do pacote MTC para lançá-lo conjuntamente -->
-  <exec_depend>task_pkg</exec_depend>
+  <exec_depend>drago_task_pkg</exec_depend>
 
-
+  <!-- Inclui a dependência do pacote de descrição (urdf) -->
+  <exec_depend>drago_description_pkg</exec_depend>
 
   <export>
       <build_type>ament_cmake</build_type>

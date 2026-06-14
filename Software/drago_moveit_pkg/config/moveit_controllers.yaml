@@ -4,9 +4,17 @@ moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControll
 
 moveit_simple_controller_manager:
   controller_names:
-    - Drago_controller
+    - gripper_controller
+    - arm_controller
 
-  Drago_controller:
+  gripper_controller:
+    type: FollowJointTrajectory
+    joints:
+      - Left_Claw_joint
+      - Right_Claw_joint
+    action_ns: follow_joint_trajectory
+    default: true
+  arm_controller:
     type: FollowJointTrajectory
     joints:
       - Waist_joint
@@ -16,4 +24,4 @@ moveit_simple_controller_manager:
       - Wrist_2_joint
       - Effector_joint
     action_ns: follow_joint_trajectory
-    default: true
+    default: true 

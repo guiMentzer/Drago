@@ -42,7 +42,20 @@ hardware_interface::CallbackReturn RobotHardwareInterface::on_init(
       "'baud_rate' not set — defaulting to 115200");
   }
 
-  // Validate joint count
+  // Calibration constant "x": servo angle (degrees) when the gripper is fully
+  // closed (displacement = 0). Tune this from the URDF without recompiling:
+  //   <param name="gripper_closed_servo_angle_deg">90.0</param>
+  try {
+    gripper_closed_servo_angle_deg_ =
+      std::stod(info_.hardware_parameters.at("gripper_closed_servo_angle_deg"));
+  } catch (const std::out_of_range &) {
+    gripper_closed_servo_angle_deg_ = 90.0;
+    RCLCPP_WARN(rclcpp::get_logger("RobotHardwareInterface"),
+      "'gripper_closed_servo_angle_deg' not set — defaulting to 90.0 (CALIBRATE THIS)");
+  }
+
+  // Validate joint count: 6 arm joints + 2 gripper claw joints.
+  // The fixed "Gripper_joint" is NOT expected here.
   if (info_.joints.size() != NUM_JOINTS) {
     RCLCPP_ERROR(rclcpp::get_logger("RobotHardwareInterface"),
       "Expected %zu joints, got %zu.", NUM_JOINTS, info_.joints.size());
@@ -54,10 +67,14 @@ hardware_interface::CallbackReturn RobotHardwareInterface::on_init(
   hw_commands_position_.resize(NUM_JOINTS, 0.0);
   hw_states_position_.resize(NUM_JOINTS, 0.0);
 
+  bool found_right_claw = false;
+  bool found_left_claw = false;
+
   for (size_t i = 0; i < NUM_JOINTS; ++i) {
     joint_names_[i] = info_.joints[i].name;
 
     // Validate that each joint exposes a position command interface
+    // (prismatic joints use HW_IF_POSITION too — value is in meters)
     bool has_position_cmd = false;
     for (const auto & cmd_if : info_.joints[i].command_interfaces) {
       if (cmd_if.name == hardware_interface::HW_IF_POSITION) {
@@ -71,6 +88,20 @@ hardware_interface::CallbackReturn RobotHardwareInterface::on_init(
         joint_names_[i].c_str());
       return hardware_interface::CallbackReturn::ERROR;
     }
+
+    if (joint_names_[i] == "Right_Claw_joint") {
+      right_claw_index_ = i;
+      found_right_claw = true;
+    } else if (joint_names_[i] == "Left_Claw_joint") {
+      left_claw_index_ = i;
+      found_left_claw = true;
+    }
+  }
+
+  if (!found_right_claw || !found_left_claw) {
+    RCLCPP_ERROR(rclcpp::get_logger("RobotHardwareInterface"),
+      "Could not find 'Right_Claw_joint' and/or 'Left_Claw_joint' in <ros2_control>.");
+    return hardware_interface::CallbackReturn::ERROR;
   }
 
   serial_fd_ = -1;
@@ -195,10 +226,15 @@ hardware_interface::return_type RobotHardwareInterface::read(
 // Sends a position command to the Arduino over serial.
 //
 // Protocol (one line per control cycle):
-//   "J <j0_deg> <j1_deg> <j2_deg> <j3_deg> <j4_deg> <j5_deg>\n"
+//   "J <arm0_deg> <arm1_deg> <arm2_deg> <arm3_deg> <arm4_deg> <arm5_deg> <gripper_deg>\n"
 //
-// Angles are sent in degrees with 2 decimal places.
-// The Arduino is responsible for driving the servos/steppers.
+// - The 6 arm angles are sent in the order the arm joints appear in
+//   <ros2_control> (excluding Right_Claw_joint / Left_Claw_joint), converted
+//   from radians to degrees.
+// - The 7th value is the gripper servo angle (degrees), computed from
+//   Right_Claw_joint's commanded displacement (meters) via
+//   gripperDisplacementToServoAngleDeg(). Left_Claw_joint is mechanically
+//   mirrored and is NOT sent — there is only one physical servo.
 // ────────────────────────────────────────────────────────────────────────────
 hardware_interface::return_type RobotHardwareInterface::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
@@ -214,14 +250,25 @@ hardware_interface::return_type RobotHardwareInterface::write(
   // This ensures we always send the latest command, not a stale one.
   tcflush(serial_fd_, TCOFLUSH);
 
-  // Build command string: "J d0 d1 d2 d3 d4 d5\n"
-  // ros2_control works in radians; convert to degrees for the Arduino.
+  // Build command string: "J <6 arm angles deg> <gripper angle deg>\n"
   std::ostringstream oss;
   oss << "J";
+
+  // Arm joints: every joint except the two gripper claw joints.
+  // ros2_control works in radians; convert to degrees for the Arduino.
   for (size_t i = 0; i < NUM_JOINTS; ++i) {
-    double degrees = hw_commands_position_[i] * (180.0 / M_PI); // Converte radianos em graus
+    if (i == right_claw_index_ || i == left_claw_index_) {
+      continue;
+    }
+    double degrees = hw_commands_position_[i] * (180.0 / M_PI);
     oss << " " << std::fixed << std::setprecision(2) << degrees;
   }
+
+  // Gripper: single servo driven by Right_Claw_joint's displacement (meters).
+  double gripper_servo_deg =
+    gripperDisplacementToServoAngleDeg(hw_commands_position_[right_claw_index_]);
+  oss << " " << std::fixed << std::setprecision(2) << gripper_servo_deg;
+
   oss << "\n";
 
   if (!sendCommand(oss.str())) {
@@ -229,8 +276,36 @@ hardware_interface::return_type RobotHardwareInterface::write(
       "Failed to send command: %s", oss.str().c_str());
     return hardware_interface::return_type::ERROR;
   }
-  //RCLCPP_INFO(rclcpp::get_logger("RobotHardwareInterface"), "Comando enviado: %s", oss.str().c_str());
+
   return hardware_interface::return_type::OK;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// gripperDisplacementToServoAngleDeg
+//
+// Converts the prismatic claw displacement "d" (meters, as commanded by
+// ros2_control) into the physical gripper servo angle (degrees).
+//
+// Geometry: d = GRIPPER_LINK_LENGTH * cos(theta)  ⇒  theta = acos(d / L)
+//   - At d = 0 (gripper closed):              theta = 90°
+//   - At d = GRIPPER_LINK_LENGTH (max open):  theta = 0°
+//
+// Calibration: the servo angle corresponding to the *closed* position (x)
+// is configurable via gripper_closed_servo_angle_deg_. The offset between
+// theta and 90° is applied relative to that calibrated zero:
+//
+//   servo_angle = x + (theta_deg - 90°)
+//
+// so that d = 0 ⇒ servo_angle = x, exactly as calibrated.
+// ────────────────────────────────────────────────────────────────────────────
+double RobotHardwareInterface::gripperDisplacementToServoAngleDeg(double displacement_m) const
+{
+  double ratio = displacement_m / GRIPPER_LINK_LENGTH;
+  ratio = std::clamp(ratio, -1.0, 1.0);  // guard against acos() domain errors
+
+  double theta_deg = std::acos(ratio) * (180.0 / M_PI);
+
+  return gripper_closed_servo_angle_deg_ + (theta_deg - 90.0);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -308,7 +383,7 @@ void RobotHardwareInterface::closeSerialPort()
     close(serial_fd_);
     serial_fd_ = -1;
     RCLCPP_INFO(rclcpp::get_logger("RobotHardwareInterface"),
-      "Serial port closed.");
+      "Sderial port close.");
   }
 }
 
