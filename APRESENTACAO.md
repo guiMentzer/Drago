@@ -2,7 +2,67 @@
 
 Este repositório contém o firmware para o Arduino responsável pelo controle dos servos motores do braço robótico **Drago**. O código atua como o estágio final de uma pipeline que converte comandos de software (ROS2/MoveIt) em movimentos físicos.
 
-## 1. Função `angleToPulse`
+## 1. void setup()
+
+É uma das funções essenciais para o Arduino funcionar. É executada uma única vez no começo do código, por isso é usada para configuração de portas/bilbiotecas
+
+```cpp
+// [...]
+
+float angles[6];
+
+void setup()
+  {
+    Serial.begin(115200);
+    Driver.begin();
+    Driver.setPWMFreq(SERVO_FREQ);
+    
+    delay(10);
+  }
+
+// [...]
+```
+
+A linha ```Driver.setPWMFreq(SERVO_FREQ);``` usa a bilbioteca **Adafruit_PWMServoDriver** para controlar os servos. Aqui, seta a frequência de atualização do sinal para  50 Hz, ```#define SERVO_FREQ 50```. 
+
+## 2. void loop()
+
+É a outra função essencial para o Arduino. Como o nome diz, é executada em loop, sem parar, e contém toda nossa lógica. 
+
+```cpp
+// [...]
+
+void loop() 
+{
+  if (!Serial.available()) return;
+
+  String input = Serial.readStringUntil('\n'); 
+  input.trim();
+
+  if (input.length() == 0) return;
+  if (input == "HOME") 
+  {
+    //Serial.println("OK HOME");
+    angles[6] = {0.0}; 
+    for(byte j=0;j<=5;j++)
+    {
+    Driver.setPWM(j, 0, angleToPulse(angles[j], j));
+    delay(10);
+    }
+  }
+
+// [...]
+
+}
+```
+
+A mensagem serial é do tipo ```HOME``` para a posição de descanso e ```J <d1> <d2> <d3> <d4> <d5> <d6>``` para qualquer outra posição. 
+
+```if(input == "HOME")``` verifica se a mensagem é da posição de descanso. 
+
+```Driver.setPWM(j, 0, angleToPulse(angles[j], j));``` usa a bilioteca para mandar um sinal PWM ao servo j (primeiro parâmetro), com sinal ```angleToPulse(angles[j], j)``` (terceiro parâmetro).  
+
+## 3. Função `angleToPulse`
 Esta função é responsável por mapear os ângulos recebidos para a contagem de pulso PWM específica de cada junta. Ela garante que o servo não tente se mover além dos limites físicos configurados através de verificações condicionais `if`.
 
 (guilherme): 
@@ -72,42 +132,4 @@ Se o valor está dentro dos limites, então retornamos um mapeamento desse valor
  return map(angle, MIN_1, MAX_1, MIN_PWM, MAX_PWM) + 48;
 ```
 
-## 3. Loop Principal e Comunicação Serial
-O `void loop()` monitora constantemente a porta serial. Se receber o comando `"HOME"`, o robô retorna à posição inicial. Se receber comandos de juntas iniciados por `"J "`, ele processa a string para atualizar a posição de cada motor.
-
-```cpp
-void setup() { 
-  Serial.begin(115200); 
-  Driver.begin(); 
-  Driver.setPWMFreq(SERVO_FREQ);
-}
-
-void loop() { 
-  if (!Serial.available()) return; // Aguarda dados seriais
-
-  String input = Serial.readStringUntil('\n'); 
-  input.trim();
-
-  if (input.length() == 0) return; 
-
-  // Comando para retornar à posição de repouso
-  if (input == "HOME") { 
-    for(byte j=0; j<=5; j++) { 
-      angles[j] = 0.0;
-      Driver.setPWM(j, 0, angleToPulse(angles[j], j)); 
-      delay(10); 
-    } 
-  } 
-
-  // Recebimento de novos ângulos das juntas
-  if (input.startsWith("J ")) { 
-    String data = input.substring(3); 
-    data.trim();
-    // O processamento extrai os valores de radianos para o array angles[]
-    // e executa Driver.setPWM() para cada junta.
-  }
-}
-```
-
-## Conclusão
 O uso da função `map()` e da estrutura `switch` permite que o Drago tenha movimentos calibrados individualmente para cada motor, traduzindo o planejamento virtual em ação física precisa.
