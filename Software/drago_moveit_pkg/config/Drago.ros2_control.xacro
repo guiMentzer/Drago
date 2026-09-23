@@ -5,11 +5,11 @@
 
         <ros2_control name="DragoSystem" type="system">
             <hardware>
-                 <!-- By default, set up controllers for simulation. This won't work on real hardware -->
+                <!-- By default, set up controllers for simulation. This won't work on real hardware -->
                 <!--<plugin>mock_components/GenericSystem</plugin>-->
-                <plugin>drago_hardware_interface/RobotHardwareInterface</plugin>
-                <param name="serial_port">/dev/ttyUSB0</param>
-                <param name="baud_rate">115200</param>
+                <plugin>mock_components/GenericSystem</plugin>
+                <!--<param name="serial_port">/dev/ttyUSB0</param>-->
+                <!--<param name="baud_rate">115200</param>-->
                 <param name="gripper_closed_servo_angle_deg">30.0</param>
             </hardware>
             <joint name="Left_Claw_joint">

@@ -25,6 +25,7 @@
 
 #define SERVO_FREQ   50 // Standard analog servo update frequency (50 Hz)
 #define NUM_JOINTS   7  // 6 Arm joints (0..5) + 1 Gripper servo (6)
+#define BUILTIN_LED_PIN 2
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Joint Calibration & Kinematic Limits
@@ -258,8 +259,13 @@ void updateDisplay()
 // ─────────────────────────────────────────────────────────────────────────────
 void setup() 
 {
-    // Micro-ROS Serial Transport at 115200 baud
-    Serial.begin(115200);
+    // Built-in LED: blinking while waiting for the micro-ROS agent,
+    // steady on once connected.
+    pinMode(BUILTIN_LED_PIN, OUTPUT);
+    digitalWrite(BUILTIN_LED_PIN, LOW);
+
+    // Micro-ROS Serial Transport at 921600 baud
+    Serial.begin(921600);
     set_microros_serial_transports(Serial);
 
     // I2C Peripherals: PCA9685 Driver & OLED Display
@@ -294,6 +300,17 @@ void loop()
     static unsigned long last_ping_time = 0;
     static unsigned long last_display_time = 0;
     unsigned long now = millis();
+
+    // Indicate micro-ROS connection status without blocking the control loop.
+    if (agentState == CONNECTED_AGENT) {
+        // Acende o LED built-in quando conectado ao agente micro-ROS
+        digitalWrite(BUILTIN_LED_PIN, HIGH);
+    } else if (agentState == WAITING_AGENT) {
+        // Pisca o LED built-in enquanto aguarda o agente micro-ROS
+        digitalWrite(BUILTIN_LED_PIN, (now / 250) % 2 ? HIGH : LOW);
+    } else {
+        digitalWrite(BUILTIN_LED_PIN, LOW);
+    }
 
     // 1. Refresh OLED display at ~15 Hz (non-blocking)
     if (now - last_display_time >= 66) {
